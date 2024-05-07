@@ -2,76 +2,57 @@ from django import forms
 from ipam.models import VLAN
 from .models import SavedTopology
 from dcim.models import Device, Site, Region
-from django.conf import settings
-from packaging import version
 
-NETBOX_CURRENT_VERSION = version.parse(settings.VERSION)
-
-if NETBOX_CURRENT_VERSION >= version.parse("2.11.0"):
-    from dcim.models import Location
-else:
-    from dcim.models import RackGroup as Location
-
-if NETBOX_CURRENT_VERSION >= version.parse("3.0") :
-    from django.utils.translation import gettext as _
-
-if NETBOX_CURRENT_VERSION < version.parse("3.5"):
-    from utilities.forms import (
-        BootstrapMixin,
-        DynamicModelMultipleChoiceField,
-        DynamicModelChoiceField
-    )
-else:
-    from utilities.forms import BootstrapMixin
-    from utilities.forms.fields import (
-        DynamicModelMultipleChoiceField,
-        DynamicModelChoiceField
-    )
+from dcim.models import Location
+from django.utils.translation import gettext as _
+from utilities.forms.fields import (
+    DynamicModelMultipleChoiceField,
+    DynamicModelChoiceField
+)
 
 
-class TopologyFilterForm(BootstrapMixin, forms.Form):
+class TopologyFilterForm(forms.Form):
 
     model = Device
 
     device_id = DynamicModelMultipleChoiceField(
+        label=_('Devices'),
         queryset=Device.objects.all(),
         to_field_name='id',
         required=False,
         null_option='None',
     )
     location_id = DynamicModelMultipleChoiceField(
+        label=_('Location'),
         queryset=Location.objects.all(),
         required=False,
         to_field_name='id',
         null_option='None',
     )
     site_id = DynamicModelMultipleChoiceField(
+        label=_('Sites'),
         queryset=Site.objects.all(),
         required=False,
         to_field_name='id',
         null_option='None',
     )
     vlan_id = DynamicModelChoiceField(
+        label=_('Vlan'),
         queryset=VLAN.objects.all(),
         required=False,
         to_field_name='id',
         null_option='None',
     )
     region_id = DynamicModelMultipleChoiceField(
+        label=_('Regions'),
         queryset=Region.objects.all(),
         required=False,
         to_field_name='id',
         null_option='None',
     )
-    if NETBOX_CURRENT_VERSION >= version.parse("3.0") :
-        device_id.label = _('Devices')
-        location_id.label = _('Location')
-        site_id.label = _('Sites')
-        vlan_id.label = _('Vlan')
-        region_id.label = _('Regions')
 
 
-class LoadSavedTopologyFilterForm(BootstrapMixin, forms.Form):
+class LoadSavedTopologyFilterForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)

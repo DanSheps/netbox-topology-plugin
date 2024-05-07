@@ -9,7 +9,7 @@ class SavedTopology(models.Model):
     topology = models.JSONField()
     layout_context = models.JSONField(null=True, blank=True)
     created_by = models.ForeignKey(
-        to="users.NetBoxUser",
+        to="users.User",
         on_delete=models.CASCADE,
         blank=False,
         null=False,

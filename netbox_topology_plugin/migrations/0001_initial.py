@@ -2,6 +2,14 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 
+def getusermodel():
+    try:
+        from users.models import NetBoxUser
+        return 'users.netboxuser'
+    except ImportError:
+        return 'users.user'
+
+
 class Migration(migrations.Migration):
 
     initial = True
@@ -19,7 +27,7 @@ class Migration(migrations.Migration):
                 ('topology', models.JSONField()),
                 ('layout_context', models.JSONField(blank=True, null=True)),
                 ('timestamp', models.DateTimeField()),
-                ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='users.netboxuser')),
+                ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=getusermodel())),
             ],
         ),
     ]
